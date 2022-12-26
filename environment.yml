@@ -16,6 +16,7 @@ dependencies:
   - cudatoolkit=9.0
   - torchvision
   - pandas
+  - difw
   - pip:
     - requests
     - sacred
