@@ -1,0 +1,73 @@
+Loaded module: binutils/2.34
+Loaded module: gcc/8.4.0
+Loaded dependency [python3/3.9.11]: gcc/10.3.0-binutils-2.36.1
+Loaded module: python3/3.9.11
+
+Loading python3/3.9.11
+  Loading requirement: gcc/10.3.0-binutils-2.36.1
+Loaded module: cuda/11.6
+Loaded module: ninja/1.11.1
+WARNING - root - Changed type of config entry "flow_checkpoint" from str to NoneType
+INFO - decomposition-flows-images - Running command 'main'
+INFO - decomposition-flows-images - Started run with ID "cifar-10-fast-5-bit-5"
+INFO - main - Training dataset size: 49500
+INFO - main - Validation dataset size: 500
+INFO - main - Image dimensions: 3x32x32
+INFO - create_flow - There are 5161548 trainable parameters in this model.
+INFO - train_flow - Starting training...
+/zhome/ec/4/153964/.local/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:508: UserWarning: To get the last learning rate computed by the scheduler, please use `get_last_lr()`.
+  warnings.warn("To get the last learning rate computed by the scheduler, "
+INFO - train_flow - It: 0/100000 loss: 6.151 [00:01<..., 0.00it/s]
+ERROR - decomposition-flows-images - Failed after 0:00:41!
+Traceback (most recent call last):
+  File "/zhome/ec/4/153964/Thesis/nsf_new/experiments/images.py", line 698, in <module>
+    def main(seed, _log):
+  File "/zhome/ec/4/153964/.local/lib/python3.9/site-packages/sacred/experiment.py", line 190, in automain
+    self.run_commandline()
+  File "/zhome/ec/4/153964/.local/lib/python3.9/site-packages/sacred/experiment.py", line 312, in run_commandline
+    return self.run(
+  File "/zhome/ec/4/153964/.local/lib/python3.9/site-packages/sacred/experiment.py", line 276, in run
+    run()
+  File "/zhome/ec/4/153964/.local/lib/python3.9/site-packages/sacred/run.py", line 238, in __call__
+    self.result = self.main_function(*args)
+  File "/zhome/ec/4/153964/.local/lib/python3.9/site-packages/sacred/config/captured_function.py", line 42, in captured_function
+    result = wrapped(*args, **kwargs)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/experiments/images.py", line 717, in main
+    train_flow(flow, train_dataset, val_dataset, (c, h, w), device)
+  File "/zhome/ec/4/153964/.local/lib/python3.9/site-packages/sacred/config/captured_function.py", line 42, in captured_function
+    result = wrapped(*args, **kwargs)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/experiments/images.py", line 446, in train_flow
+    samples, _ = flow._transform.inverse(noise)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 59, in inverse
+    return self._cascade(inputs, funcs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 49, in _cascade
+    outputs, logabsdet = func(outputs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 59, in inverse
+    return self._cascade(inputs, funcs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 49, in _cascade
+    outputs, logabsdet = func(outputs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 59, in inverse
+    return self._cascade(inputs, funcs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 49, in _cascade
+    outputs, logabsdet = func(outputs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 59, in inverse
+    return self._cascade(inputs, funcs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/base.py", line 49, in _cascade
+    outputs, logabsdet = func(outputs, context)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/coupling.py", line 111, in inverse
+    transform_split, logabsdet_split = self._coupling_transform_inverse(
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/coupling.py", line 188, in _coupling_transform_inverse
+    return self._coupling_transform(inputs, transform_params, inverse=True)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/coupling.py", line 200, in _coupling_transform
+    outputs, logabsdet = self._piecewise_cdf(inputs, transform_params, inverse)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/coupling.py", line 532, in _piecewise_cdf
+    return spline_fn(
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/splines/rational_quadratic.py", line 191, in unconstrained_cpab_spline
+    ) = cpab_spline(
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/splines/rational_quadratic.py", line 225, in cpab_spline
+    outputs, logabsdet = cpab_transform(T,inputs,-theta)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/cpab_transform.py", line 160, in cpab_transform
+    output, log_jac = integrate_closed_form(input, theta, params, time)
+  File "/zhome/ec/4/153964/Thesis/nsf_new/nde/transforms/cpab_transform.py", line 154, in integrate_closed_form
+    raise BaseException
+BaseException

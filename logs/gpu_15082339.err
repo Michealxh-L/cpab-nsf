@@ -1,0 +1,12 @@
+Loaded module: binutils/2.34
+Loaded module: gcc/8.4.0
+Loaded dependency [python3/3.9.11]: gcc/10.3.0-binutils-2.36.1
+Loaded module: python3/3.9.11
+
+Loading python3/3.9.11
+  Loading requirement: gcc/10.3.0-binutils-2.36.1
+INFO - decomposition-flows-images - Running command 'sample'
+INFO - decomposition-flows-images - Started
+INFO - create_flow - There are 5333538 trainable parameters in this model.
+INFO - decomposition-flows-images - Completed after 0:00:23
+Loaded module: cuda/11.6

@@ -1,0 +1,19 @@
+Loaded module: binutils/2.34
+Loaded module: gcc/8.4.0
+Loaded dependency [python3/3.9.11]: gcc/10.3.0-binutils-2.36.1
+Loaded module: python3/3.9.11
+
+Loading python3/3.9.11
+  Loading requirement: gcc/10.3.0-binutils-2.36.1
+INFO - decomposition-flows-images - Running command 'eval_on_test'
+INFO - decomposition-flows-images - Started
+INFO - eval_on_test - Test dataset size: 10000
+INFO - eval_on_test - Image dimensions: 3x32x32
+INFO - create_flow - There are 5333538 trainable parameters in this model.
+  0%|          | 0/20 [00:00<?, ?it/s]  5%|▌         | 1/20 [00:06<02:03,  6.48s/it] 10%|█         | 2/20 [00:06<00:49,  2.76s/it] 15%|█▌        | 3/20 [00:06<00:26,  1.57s/it] 20%|██        | 4/20 [00:06<00:16,  1.00s/it] 25%|██▌       | 5/20 [00:07<00:10,  1.44it/s] 30%|███       | 6/20 [00:07<00:07,  1.98it/s] 35%|███▌      | 7/20 [00:07<00:05,  2.59it/s] 40%|████      | 8/20 [00:07<00:03,  3.25it/s] 45%|████▌     | 9/20 [00:07<00:02,  3.92it/s] 50%|█████     | 10/20 [00:07<00:02,  4.55it/s] 55%|█████▌    | 11/20 [00:07<00:01,  5.12it/s] 60%|██████    | 12/20 [00:08<00:01,  5.57it/s] 65%|██████▌   | 13/20 [00:08<00:01,  5.95it/s] 70%|███████   | 14/20 [00:08<00:00,  6.26it/s] 75%|███████▌  | 15/20 [00:08<00:00,  6.52it/s] 80%|████████  | 16/20 [00:08<00:00,  6.68it/s] 85%|████████▌ | 17/20 [00:08<00:00,  6.80it/s] 90%|█████████ | 18/20 [00:08<00:00,  7.10it/s] 95%|█████████▌| 19/20 [00:08<00:00,  7.59it/s]100%|██████████| 20/20 [00:09<00:00,  2.13it/s]
+INFO - decomposition-flows-images - Completed after 0:00:15
+INFO - decomposition-flows-images - Running command 'sample'
+INFO - decomposition-flows-images - Started
+INFO - create_flow - There are 5333538 trainable parameters in this model.
+INFO - decomposition-flows-images - Completed after 0:00:05
+Loaded module: cuda/11.6
