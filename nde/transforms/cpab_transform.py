@@ -11,8 +11,9 @@ def batch_effect(x, theta):
     if x.ndim == 1:
         n_batch = theta.shape[0]
         n_points = x.shape[-1]
-        x = torch.broadcast_to(x, (n_batch, n_points))  # .flatten()
-    return x.flatten()
+        x = torch.broadcast_to(x, (n_batch, n_points))
+    shape = x.shape
+    return x.flatten().reshape(shape[0],shape[-1])
 
 
 def get_affine(x, theta, params):
@@ -63,8 +64,14 @@ def get_cell(x, params):
 def get_psi(x, t, theta, params):
     A, r = get_affine(x, theta, params)
     c = get_cell(x, params)
-    a = A[r, c, 0]
-    b = A[r, c, 1]
+    
+    shape = A.shape
+    num = shape[0]
+
+    A = A.reshape([num,shape[-2],shape[-1]])
+    idx = torch.cat((c,c),1).reshape(c.shape[0],1,2)
+    a = A.gather(1,idx).reshape(num,2,1)[:,0]
+    b = A.gather(1,idx).reshape(num,2,1)[:,1]
 
     cond = cmpf0(a)
     x1 = x + t * b
@@ -77,13 +84,16 @@ def get_psi(x, t, theta, params):
 
 def get_hit_time(x, theta, params):
     thit = torch.empty_like(x)
-    valid = torch.full_like(x, True, dtype=bool)
 
     c = get_cell(x, params)
     A, r = get_affine(x, theta, params)
-
-    a = A[r, c, 0]
-    b = A[r, c, 1]
+    # A = A[~valid]
+    shape = A.shape
+    num = shape[0]
+    A = A.reshape([num,shape[-2],shape[-1]])
+    idx = torch.cat((c,c),1).reshape(c.shape[0],1,2)
+    a = A.gather(1,idx).reshape(num,2,1)[:,0]
+    b = A.gather(1,idx).reshape(num,2,1)[:,1]
 
     v = a * x + b
     cond1 = cmpf0(v)
@@ -98,9 +108,20 @@ def get_hit_time(x, theta, params):
     cond5 = torch.logical_or(xc == params.xmin, xc == params.xmax)
 
     cond = cond1 | cond2 | cond3 | cond4 | cond5
-    thit[~cond] = torch.where(
-        cmpf0(a[~cond]), (xc[~cond] - x[~cond]) / b[~cond], torch.log(vc[~cond] / v[~cond]) / a[~cond],
-    )
+    #thit[~cond] = torch.where(cmpf0(a[~cond]), (xc[~cond] - x[~cond]) / b[~cond], torch.log(vc[~cond] / v[~cond]) / a[~cond])
+    b0_index = abs(b[~cond])<5e-16
+    zero_index = (xc[~cond] - x[~cond]) == 0
+    intersect_index = b[~cond]==0 ### intersection of b0_index and zero_index
+    intersect_index = intersect_index & zero_index
+    div1 = torch.empty_like(b[~cond])
+    div1[b0_index] = float("inf")
+    div1[zero_index] = float(0)
+    div1[~b0_index] = (xc[~cond][~b0_index] - x[~cond][~b0_index]) / b[~cond][~b0_index] ### if xc-x is 0, the result should be 0 rather inf
+    div1[~intersect_index] = float("inf")
+    # div1 = (xc[~cond] - x[~cond]) / b[~cond]  ### b is too small that cause the inifite issue
+    div_temp = torch.log(vc[~cond] / v[~cond]) # vc and v is nagative, which cause nan by using log, to avoid this we need alternatively apply div1
+    div2 = (div_temp) / (a[~cond])
+    thit[~cond] = torch.where(cmpf0(a[~cond]), div1, div2)
     thit[cond] = float("inf")
     return thit, xc, cc, a
 
@@ -118,39 +139,46 @@ def integrate_closed_form(x, theta, params, time=1.0):
 
     c = get_cell(x, params)  # the cell index of x
     cont = 0
+    
 
     log_jac = torch.zeros_like(x)
+    h_valid = torch.full_like(x, False, dtype=bool)
 
     while True:
         thit, xc, cc, a = get_hit_time(x, theta, params)
         psi = get_psi(x, t, theta, params)
 
         valid = thit > t
-        phi[~done] = psi
-
         valid_t = thit < time
+        phi[~done] = psi[~h_valid]
+    
         t_temp = None
+
         if torch.all(valid):
             t_temp = t
         else:
             t_temp = thit
             t_temp[~valid_t] = time
-
-        log_jac[~done] += a * t_temp
-        done[~done] = valid
+            # t_temp = torch.nan_to_num(thit.clone()*valid_t) + torch.full([n_batch,1],time)*(~valid_t)
+            # thit = t_temp.clone()
+        add = a*t_temp
+        log_jac = log_jac*done + log_jac*(~done)+add*(~h_valid)
+        done = done*(done.clone()) + valid*(~h_valid)
+        h_valid[done] = True
 
         if torch.all(valid):
             return phi.reshape((n_batch, -1)), log_jac
 
-        params.r = params.r[~valid]
-        x = xc[~valid]
-        c = cc[~valid]
-        t = (t - thit)[~valid]
+        x = x*valid + xc*(~valid)
+        shape = x.shape
+        x = x.reshape(shape[0],1)
+        t = t*valid + (t.clone() - thit)*(~valid)
+        shape = t.shape
+        t = t.reshape(shape[0],1)
 
         cont += 1
         nc = params.nc
-        # nc = 20
-        if cont > nc: # print the cell index and check
+        if cont > nc:
             raise BaseException
     return None
 
